@@ -16,8 +16,6 @@ public class Table {
 
     private String tableName;
 
-    private String beanName;
-
     private String remark;
 
     private List<String> primaryKeys;

@@ -1,0 +1,18 @@
+package ${mapperPackage};
+
+import java.util.List;
+import ${modelPackage}.${beanName};
+import tk.mybatis.mapper.common.Mapper;
+
+/**
+ * <p>
+ * </p>
+ * 
+ * @author ${author}
+ * @date ${dateTime}
+ * @version
+ */
+public interface ${beanName}Mapper extends Mapper<${beanName}> {
+
+
+}

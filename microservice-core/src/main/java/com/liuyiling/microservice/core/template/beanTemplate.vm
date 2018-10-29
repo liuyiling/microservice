@@ -1,0 +1,57 @@
+package ${modelPackage};
+import javax.persistence.*;
+import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
+#if (${hasDate})
+import java.util.Date;
+#end
+
+#if (${hasBigdecimal})
+
+import java.math.BigDecimal;
+#end
+
+/**
+*${remark}
+*
+* @author ${author}
+*/
+@Table(name = "${tableName}")
+public class ${beanName} implements Serializable {
+#foreach ($item in $columns)
+
+    #if (${item.remark} && ${item.remark}!='' )
+    /**
+    * ${item.remark}
+    */
+    #end
+
+
+    #if ( ${item.javaType} == "String" )
+    @Length(max=${item.maxLength},message="${item.column} 长度不能超过${item.maxLength}")
+    #end
+    #if ( ${item.allowNull} == false )
+    @NotNull(message = "${item.column} not allow null")
+    #end
+    #foreach(${key} in ${primaryKeys})
+        #if ( ${item.column} == ${key} )
+        @Id
+            #break
+        #end
+    #end
+@Column(name = "${item.column}")
+private ${item.javaType} ${item.lowerProperty};
+#end
+
+#foreach ($item in $columns)
+
+public ${item.javaType} get${item.property}() {
+return ${item.lowerProperty};
+}
+
+public void set${item.property}(${item.javaType} ${item.lowerProperty}) {
+this.${item.lowerProperty} = ${item.lowerProperty};
+}
+#end
+}

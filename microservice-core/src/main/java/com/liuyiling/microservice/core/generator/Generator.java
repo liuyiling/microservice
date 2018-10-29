@@ -59,7 +59,7 @@ public class Generator {
         VelocityEngine velocityEngine = createVelocityEngine();
         VelocityContext context = createContext(table);
         Writer writer = createWriter(targetDir, config.getModelPackage().replace(".", "/")
-                + "/" + table.getBeanName() + ".java");
+                + "/" + table.getPojoBeanName() + ".java");
 
         Template t = velocityEngine.getTemplate("beanTemplate.vm");
         t.merge(context, writer);
@@ -70,7 +70,7 @@ public class Generator {
         VelocityEngine velocityEngine = createVelocityEngine();
         VelocityContext context = createContext(table);
         Writer writer = createWriter(targetDir, config.getMapperPackage().replace(".", "/")
-                + "/" + table.getBeanName() + "Mapper.java");
+                + "/" + table.getPojoBeanName() + "Mapper.java");
         Template t = velocityEngine.getTemplate("mapperTemplate.vm");
         t.merge(context, writer);
         flushWriter(writer);
@@ -88,7 +88,7 @@ public class Generator {
         VelocityEngine velocityEngine = createVelocityEngine();
         VelocityContext context = createContext(table);
         Writer writer = createWriter(targetDir, config.getXmlPackage()
-                .replace(".", "/") + "/" + table.getBeanName() + "Mapper.xml");
+                .replace(".", "/") + "/" + table.getPojoBeanName() + "Mapper.xml");
         Template t = velocityEngine.getTemplate("xmlTemplate.vm");
         t.merge(context, writer);
         flushWriter(writer);

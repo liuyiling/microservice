@@ -14,15 +14,15 @@ import java.util.List;
  */
 public class OracleGenerator {
 
-    private static String url = "jdbc:oracle:thin:@192.168.84.62:1521:yxdev11gdb";
-    private static String driver = "oracle.jdbc.OracleDriver";
-    private static String user = "ec_eip_adm";
-    private static String password = "eip123abc";
+    private static String URL = "jdbc:oracle:thin:@192.168.84.62:1521:yxdev11gdb";
+    private static String DRIVER = "oracle.jdbc.OracleDriver";
+    private static String USER = "ec_eip_adm";
+    private static String PASSWORD = "eip123abc";
 
     private static Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection connection;
-        Class.forName(driver);
-        connection = DriverManager.getConnection(url, user, password);
+        Class.forName(DRIVER);
+        connection = DriverManager.getConnection(URL, USER, PASSWORD);
         return connection;
     }
 
@@ -43,7 +43,7 @@ public class OracleGenerator {
     public static void main(String[] args) throws Exception {
         //需要生成DB类的表名、支持正则匹配、推荐使用精确匹配、每次生成一张
         String wantedTableName = "TB_EIP_REQUIRE_POOL";
-
+        //初始化配置
         VelocityConfiguration config = new VelocityConfiguration();
         config.setTargetDir(getProjectPath() + "/src/main/java/");
         config.setModelPackage("com.liuyiling.microservice.core.storage.dao.entity");
@@ -53,11 +53,10 @@ public class OracleGenerator {
         Generator generator = new Generator(config);
         Connection connection = getConnection();
         DataProcessor dataProcessor = new DataProcessor(connection);
-
         List<Table> tableInfos = dataProcessor.getTableInfoList(wantedTableName);
         connection.close();
 
-        //生成DB操作类代码
+        //生成DB操作类相关代码
         try {
             String xmlDir = config.getTargetDir().replace("java/", "resources/");
             for (Table table : tableInfos) {

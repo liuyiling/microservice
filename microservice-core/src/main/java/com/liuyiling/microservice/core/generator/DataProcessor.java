@@ -146,12 +146,11 @@ public class DataProcessor {
                 List<String> primaryKeys = new ArrayList<>();
                 ResultSet keysSet = connection.getMetaData().getPrimaryKeys(null, null, table.getTableName());
                 while (keysSet.next()) {
-                    String primaryKey = keysSet.getString("COLUMN_NAME");
+                    String primaryKey = keysSet.getString(COLUMN_NAME);
                     primaryKeys.add(primaryKey);
                 }
                 table.setPrimaryKeys(primaryKeys);
-                table.setBeanName(StringUtils.underLine2Camel(StringUtils.firstChar2UpperCase(table.getTableName().toLowerCase())));
-                table.setPojoBeanName(table.getBeanName().toLowerCase());
+                table.setPojoBeanName(StringUtils.underLine2Camel(StringUtils.firstChar2UpperCase(table.getTableName().toLowerCase())));
                 prepareProcessColumns(table.getColumns());
             }
         } catch (SQLException e) {
