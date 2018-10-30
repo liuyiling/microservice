@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="${modelPackage}.${beanName}Mapper" >
-  <resultMap id="BaseResultMap" type="${modelPackage}.${beanName}" >	
+<mapper namespace="${mapperPackage}.${pojoBeanName}Mapper" >
+  <resultMap id="BaseResultMap" type="${modelPackage}.${pojoBeanName}" >
 #foreach ( $item in ${columns})
 #set($iskey=false)
 #foreach($key in $primaryKeys)
-#if( $item.column == $key )
+#if( $item.columnName == $key )
 #set($iskey=true)
-    <id column="${item.column}" property="${item.lowerProperty}" jdbcType="${item.jdbcType}" />
+    <id column="${item.columnName}" property="${item.camelProperty}" jdbcType="${item.jdbcType}" />
 #end
 #end
 #end
@@ -15,12 +15,12 @@
 #foreach ( $item in ${columns})
 #set($iskey=false)
 #foreach($key in $primaryKeys)
-#if( $item.column == $key )
+#if( $item.columnName == $key )
 #set($iskey=true)
 #end
 #end
 #if($iskey ==false)
-    <result column="${item.column}" property="${item.lowerProperty}" jdbcType="${item.jdbcType}"  />
+    <result column="${item.columnName}" property="${item.camelProperty}" jdbcType="${item.jdbcType}"  />
 #end
 #end
 

@@ -53,6 +53,8 @@ public class OracleGenerator {
         Generator generator = new Generator(config);
         Connection connection = getConnection();
         DataProcessor dataProcessor = new DataProcessor(connection);
+
+        //获取DB表信息
         List<Table> tableInfos = dataProcessor.getTableInfoList(wantedTableName);
         connection.close();
 

@@ -10,11 +10,9 @@ import lombok.Data;
 @Data
 public class Column {
 
-    private String lowerProperty;
+    private String camelProperty;
 
-    private String property;
-
-    private String column;
+    private String columnName;
 
     private int maxLength;
 
@@ -23,8 +21,6 @@ public class Column {
     private String jdbcType;
 
     private String remark;
-
-    private int dataType;
 
     private boolean allowNull;
 }

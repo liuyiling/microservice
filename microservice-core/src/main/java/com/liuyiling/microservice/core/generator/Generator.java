@@ -50,7 +50,7 @@ public class Generator {
         VelocityEngine ve = new VelocityEngine();
         ve.setProperty(Velocity.ENCODING_DEFAULT, "UTF-8");
         ve.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
-        ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, config.getTargetDir() + "com/xmair/core/template/");
+        ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, config.getTargetDir() + "com/liuyiling/microservice/core/template/");
         ve.init();
         return ve;
     }

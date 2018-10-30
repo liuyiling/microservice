@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * 数据表的预处理
@@ -33,8 +32,7 @@ public class DataProcessor {
     }
 
     public List<Table> getTableInfoList(String tableNamePattern) {
-        Map<String, Map<String, Map<String, Object>>> oracleTableInfoMap = getOracleTableInfoMap(tableNamePattern);
-        List<Table> tableInfoList = oracleTableInfoMap2TableInfoList(oracleTableInfoMap);
+        List<Table> tableInfoList = getOracleTableInfoMap(tableNamePattern);
         prepareProcessTableInfos(tableInfoList);
         return tableInfoList;
     }
@@ -43,10 +41,11 @@ public class DataProcessor {
      * 从Oracle中获取所有的表结构信息
      *
      * @param tableNamePattern
-     * @return <tableName, <columnName, <column_property_name,column_property_value>>>
+     * @return
      */
-    public Map<String, Map<String, Map<String, Object>>> getOracleTableInfoMap(String tableNamePattern) {
-        Map<String, Map<String, Map<String, Object>>> tableInfoMap = new HashMap<>();
+    public List<Table> getOracleTableInfoMap(String tableNamePattern) {
+        List<Table> tableInfoList = new ArrayList<>();
+        Map<String, Table> tableInfoMap = new HashMap<>();
 
         try {
             DatabaseMetaData meta = connection.getMetaData();
@@ -54,7 +53,8 @@ public class DataProcessor {
 
             while (rs.next()) {
                 String tableName = rs.getString(TABLE_NAME);
-                String columnName = rs.getString(COLUMN_NAME);
+                Column column = new Column();
+                column.setColumnName(rs.getString(COLUMN_NAME));
                 String oracleTypeStr = rs.getString(TYPE_NAME);
                 if (oracleTypeStr.equals("DATETIME")) {
                     oracleTypeStr = "DATE";
@@ -68,74 +68,40 @@ public class DataProcessor {
                 if (oracleTypeStr.equals("NUMBER")) {
                     oracleTypeStr = "DECIMAL";
                 }
-
-                Integer oracleTypeInt = rs.getInt(DATA_TYPE);
-                String remarks = rs.getString(REMARKS);
-                Map<String, Map<String, Object>> table = tableInfoMap.get(tableName);
-                if (table == null) {
-                    table = new HashMap<>();
-                    tableInfoMap.put(tableName, table);
-                }
-
-                Map<String, Object> columnPropertyMap = new HashMap<>();
-                columnPropertyMap.put("jdbcType", oracleTypeStr);
-                columnPropertyMap.put("remark", remarks);
-                columnPropertyMap.put("dataType", oracleTypeInt);
-                columnPropertyMap.put("length", rs.getInt(COLUMN_SIZE));
-                columnPropertyMap.put("isnull", rs.getInt(NULLABLE));
-                table.put(columnName, columnPropertyMap);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-        }
-        return tableInfoMap;
-    }
-
-    /**
-     * 将oracle中的tableInfoMap转换成tableList
-     *
-     * @param oracleTableInfoMap
-     * @return
-     */
-    public List<Table> oracleTableInfoMap2TableInfoList(Map<String, Map<String, Map<String, Object>>> oracleTableInfoMap) {
-        List<Table> tableInfoList = new ArrayList<>();
-
-        for (Entry<String, Map<String, Map<String, Object>>> entry : oracleTableInfoMap.entrySet()) {
-            Table table = new Table();
-            String tableName = entry.getKey();
-            table.setTableName(tableName);
-            List<Column> columns = new ArrayList<>();
-            table.setColumns(columns);
-
-            tableInfoList.add(table);
-
-            Map<String, Map<String, Object>> oracleColumns = entry.getValue();
-            for (Entry<String, Map<String, Object>> oracleConlumn : oracleColumns.entrySet()) {
-                Column column = new Column();
-                column.setColumn(oracleConlumn.getKey());
-                Map<String, Object> columnPropertyMap = oracleConlumn.getValue();
-                column.setJdbcType((String) columnPropertyMap.get("jdbcType"));
-                column.setDataType((int) columnPropertyMap.get("dataType"));
-                column.setMaxLength((int) columnPropertyMap.get("length"));
-                column.setRemark((String) columnPropertyMap.get("remark"));
-                int isnull = (int) columnPropertyMap.get("isnull");
-                if (isnull == 0) {
+                column.setJdbcType(oracleTypeStr);
+                column.setMaxLength(rs.getInt(COLUMN_SIZE));
+                column.setRemark(rs.getString(REMARKS));
+                if (rs.getInt(NULLABLE) == 0) {
                     column.setAllowNull(false);
                 } else {
                     column.setAllowNull(true);
                 }
-                //将JDBCType转换为JavaType
-                String javaType = TypeUtils.getJavaType(column.getDataType());
+                String javaType = TypeUtils.getJavaType(rs.getInt(DATA_TYPE));
                 column.setJavaType(javaType);
+
+                Table table = tableInfoMap.get(tableName);
+                if (table == null) {
+                    table = new Table();
+                    table.setTableName(tableName);
+                    table.setColumns(new ArrayList<>());
+                    tableInfoMap.put(tableName, table);
+                }
                 if ("Date".equals(javaType)) {
                     table.setHasDate(true);
                 } else if ("BigDecimal".equals(javaType)) {
                     table.setHasBigDecimal(true);
                 }
-                columns.add(column);
+                table.getColumns().add(column);
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
         }
+
+        for (Map.Entry<String, Table> entry : tableInfoMap.entrySet()) {
+            tableInfoList.add(entry.getValue());
+        }
+
         return tableInfoList;
     }
 
@@ -150,7 +116,7 @@ public class DataProcessor {
                     primaryKeys.add(primaryKey);
                 }
                 table.setPrimaryKeys(primaryKeys);
-                table.setPojoBeanName(StringUtils.underLine2Camel(StringUtils.firstChar2UpperCase(table.getTableName().toLowerCase())));
+                table.setPojoBeanName(StringUtils.underLine2Camel(StringUtils.firstChar2UpperCase(table.getTableName().toLowerCase())) + "DO");
                 prepareProcessColumns(table.getColumns());
             }
         } catch (SQLException e) {
@@ -161,9 +127,8 @@ public class DataProcessor {
 
     public void prepareProcessColumns(List<Column> columnList) {
         for (Column column : columnList) {
-            String lowerProperty = StringUtils.underLine2Camel(column.getColumn().toLowerCase());
-            column.setLowerProperty(lowerProperty);
-            column.setProperty(StringUtils.firstChar2UpperCase(StringUtils.underLine2Camel(lowerProperty)));
+            String lowerProperty = StringUtils.underLine2Camel(column.getColumnName().toLowerCase());
+            column.setCamelProperty(lowerProperty);
         }
     }
 }
