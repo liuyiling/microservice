@@ -1,32 +1,29 @@
 package com.liuyiling.microservice.core.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.support.http.StatViewServlet;
+import com.alibaba.druid.support.http.WebStatFilter;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import tk.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
-
 /**
  * @author liuyiling
  * @date on 2018/11/7
  */
 @Configuration
 @MapperScan(basePackages = "com.liuyiling.microservice.core.storage.dao.mapper", sqlSessionTemplateRef = "dbSqlSessionTemplate")
-public class DBConfig {
-
-    private Logger logger = LoggerFactory.getLogger(DBConfig.class);
-
+public class DataBaseConfig {
 
     /**
      * 生成数据池
@@ -35,7 +32,6 @@ public class DBConfig {
      * @return
      */
     @Bean(name = "dataSource")
-    @Primary
     @ConfigurationProperties(prefix = "db.spring.datasource")
     public DataSource dataSource() {
         DruidDataSource druidDataSource = new DruidDataSource();
@@ -82,5 +78,32 @@ public class DBConfig {
     public SqlSessionTemplate dbSqlSessionTemplate(@Qualifier("dbSqlSessionFactory") SqlSessionFactory sqlSessionFactory)
             throws Exception {
         return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    @Bean
+    public ServletRegistrationBean statViewServlet() {
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
+        // IP白名单
+        //servletRegistrationBean.addInitParameter("allow", "127.0.0.1,192.168.1.83");
+        // IP黑名单（优先级高于白名单）
+        servletRegistrationBean.addInitParameter("deny", "192.168.1.100");
+        // 控制台管理用户
+        servletRegistrationBean.addInitParameter("loginUsername", "admin");
+        servletRegistrationBean.addInitParameter("loginPassword", "123456");
+        // 是否能够重置数据
+        servletRegistrationBean.addInitParameter("resetEnable", "false");
+
+        return servletRegistrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean statFilter() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new WebStatFilter());
+        // 添加过滤规则
+        filterRegistrationBean.addUrlPatterns("/*");
+        // 忽略过滤的格式
+        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.css,*.jpg,*.ico,/druid/*");
+
+        return filterRegistrationBean;
     }
 }
