@@ -13,7 +13,7 @@ public class ApiVesrsionCondition implements RequestCondition<ApiVesrsionConditi
 
     private int apiVersion;
 
-    public ApiVesrsionCondition(int apiVersion){
+    public ApiVesrsionCondition(int apiVersion) {
         this.apiVersion = apiVersion;
     }
 
@@ -26,10 +26,12 @@ public class ApiVesrsionCondition implements RequestCondition<ApiVesrsionConditi
     @Override
     public ApiVesrsionCondition getMatchingCondition(HttpServletRequest request) {
         Matcher m = VERSION_PREFIX_PATTERN.matcher(request.getServletPath());
-        if(m.find()){
+        if (m.find()) {
             Integer version = Integer.valueOf(m.group(1));
-            if(version >= this.apiVersion) // 如果请求的版本号大于配置版本号， 则满足
+            // 如果请求的版本号大于配置版本号， 则满足
+            if (version >= this.apiVersion) {
                 return this;
+            }
         }
         return null;
     }

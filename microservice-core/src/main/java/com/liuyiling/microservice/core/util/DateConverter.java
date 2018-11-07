@@ -1,4 +1,4 @@
-package com.liuyiling.microservice.api.util;
+package com.liuyiling.microservice.core.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.convert.converter.Converter;

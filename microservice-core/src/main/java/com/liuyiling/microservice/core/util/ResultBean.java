@@ -1,30 +1,32 @@
-package com.liuyiling.microservice.api.util;
+package com.liuyiling.microservice.core.util;
 
-import com.liuyiling.microservice.api.exception.ExceptionEnum;
+import com.liuyiling.microservice.core.common.ExceptionEnum;
 
 import java.io.Serializable;
 
-/*
-* 定义统一标准的接口规范
-* */
-public class ResultBean<T> implements Serializable{
 
-    private int code= ExceptionEnum.SUCCESS.getCode();
+public class ResultBean<T> implements Serializable {
+
     /**
-     * 编号
+     * 整体异常
+     */
+    private int code = ExceptionEnum.SUCCESS.getCode();
+
+    /**
+     * 细分异常信息
      */
     private String errStr;
-    //= ExceptionEnum.SUCCESS.toString();
 
     /**
      * 消息内容
      */
-    private String message="success";
+    private String message = "success";
 
     /**
-     数据内容
+     * 数据内容
      */
-    private  T data;
+    private T data;
+
     public String getMessage() {
         return message;
     }
@@ -32,7 +34,6 @@ public class ResultBean<T> implements Serializable{
     public void setMessage(String message) {
         this.message = message;
     }
-
 
 
     public T getData() {
@@ -62,23 +63,25 @@ public class ResultBean<T> implements Serializable{
 
     public ResultBean(ExceptionEnum exceptionEnum, String errStr, String message, T data) {
 
-        this.code=exceptionEnum.getCode();
-        this.errStr=errStr;
-        this.message=message;
-        this.data=data;
+        this.code = exceptionEnum.getCode();
+        this.errStr = errStr;
+        this.message = message;
+        this.data = data;
     }
 
 
+    public ResultBean() {
+    }
 
-    public ResultBean(){}
-    public ResultBean(T data){
+    public ResultBean(T data) {
         super();
 
-        this.data=data;
+        this.data = data;
     }
-    public ResultBean(Throwable e){
-        this.code= ExceptionEnum.SERVER_ERROR.getCode();
 
-        this.message=e.getMessage();
+    public ResultBean(Throwable e) {
+        this.code = ExceptionEnum.SERVER_ERROR.getCode();
+
+        this.message = e.getMessage();
     }
 }

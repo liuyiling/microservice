@@ -6,18 +6,23 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import tk.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import tk.mybatis.spring.annotation.MapperScan;
 
 import javax.sql.DataSource;
+
 /**
+ * 数据库配置
+ * MapperScan定义了需要扫描的mapper位置和使用的sqlSession模板
+ *
  * @author liuyiling
  * @date on 2018/11/7
  */
@@ -28,10 +33,12 @@ public class DataBaseConfig {
     /**
      * 生成数据池
      * 在同样的DataSource中，首先使用被标注的DataSource
+     * DruidDataSource是 name为dataSource 的优先选择
      *
      * @return
      */
     @Bean(name = "dataSource")
+    @Primary
     @ConfigurationProperties(prefix = "db.spring.datasource")
     public DataSource dataSource() {
         DruidDataSource druidDataSource = new DruidDataSource();
@@ -49,6 +56,7 @@ public class DataBaseConfig {
     public SqlSessionFactory dbSqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
+
         PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
         sqlSessionFactoryBean.setMapperLocations(pathMatchingResourcePatternResolver
                 .getResources("classpath:mapper/*.xml"));
@@ -57,7 +65,7 @@ public class DataBaseConfig {
     }
 
     /**
-     * 数据库事务管理
+     * 将dataSource使用spring自带的事务管理器进行管理
      *
      * @param dataSource
      * @return
@@ -80,6 +88,11 @@ public class DataBaseConfig {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
+    /**
+     * Mybaits的监控统计页面
+     *
+     * @return
+     */
     @Bean
     public ServletRegistrationBean statViewServlet() {
         ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
@@ -96,6 +109,11 @@ public class DataBaseConfig {
         return servletRegistrationBean;
     }
 
+    /**
+     * Mybaits的监控统计页面
+     *
+     * @return
+     */
     @Bean
     public FilterRegistrationBean statFilter() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new WebStatFilter());

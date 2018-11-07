@@ -19,7 +19,9 @@ public class VersionHandlerMapping extends RequestMappingHandlerMapping {
     @Override
     protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
         RequestMappingInfo info = super.getMappingForMethod(method, handlerType);
-        if (info == null) return null;
+        if (info == null) {
+            return null;
+        }
 
         ApiVersion methodAnnotation = AnnotationUtils.findAnnotation(method, ApiVersion.class);
         if (methodAnnotation != null) {
@@ -30,7 +32,6 @@ public class VersionHandlerMapping extends RequestMappingHandlerMapping {
             ApiVersion typeAnnotation = AnnotationUtils.findAnnotation(handlerType, ApiVersion.class);
             if (typeAnnotation != null) {
                 RequestCondition<?> typeCondition = getCustomTypeCondition(handlerType);
-                // Concatenate our ApiVersion with the usual request mapping
                 info = createApiVersionInfo(typeAnnotation, typeCondition).combine(info);
             }
         }

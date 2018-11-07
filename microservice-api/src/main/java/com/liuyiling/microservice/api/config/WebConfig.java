@@ -63,6 +63,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
         List<MediaType> list = new ArrayList<MediaType>();
         list.add(MediaType.APPLICATION_JSON_UTF8);
         list.add(MediaType.APPLICATION_JSON);
+
         //请求头Accept是application/json;charset=UTF-8 或 application/json时，采用这个JSON转换器
         mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
         return mappingJackson2HttpMessageConverter;
@@ -101,7 +102,6 @@ public class WebConfig extends WebMvcConfigurationSupport {
     }
 
 
-    //添加protobuf支持，需要client指定accept-type：application/x-protobuf
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
