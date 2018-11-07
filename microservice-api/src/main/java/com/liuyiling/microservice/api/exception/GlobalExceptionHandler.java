@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
      * 统一处理Spring解析Bean验证抛出的参数校验异常
      * 状态码：401
      */
-    @ExceptionHandler({BindException.class, InvalidParamException.class, HttpMessageNotWritableException.class})
+    @ExceptionHandler({BindException.class, HttpMessageNotWritableException.class})
     public ResultBean<List<FieldError>> bindExceptionHandler(BindException e) {
         logger.warn("参数校验失败,{}", JsonUtil.bean2Json(e.getTarget()));
         return new ResultBean<>(ExceptionEnum.ARGUMENTS_INVALID, null, e.getMessage(),

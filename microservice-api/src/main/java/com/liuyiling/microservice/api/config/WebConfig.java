@@ -2,7 +2,7 @@ package com.liuyiling.microservice.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuyiling.microservice.api.apiversion.VersionHandlerMapping;
-import com.liuyiling.microservice.api.util.DateConverter;
+import com.liuyiling.microservice.core.util.DateConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

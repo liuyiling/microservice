@@ -1,9 +1,9 @@
 package com.liuyiling.microservice.api.controller;
 
 import com.liuyiling.microservice.api.apiversion.ApiVersion;
-import com.liuyiling.microservice.api.util.ResultBean;
 import com.liuyiling.microservice.core.storage.dao.entity.TbEipRequirePoolDO;
 import com.liuyiling.microservice.core.storage.dao.mapper.TbEipRequirePoolDOMapper;
+import com.liuyiling.microservice.core.util.ResultBean;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

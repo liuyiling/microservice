@@ -1,11 +1,14 @@
 package com.liuyiling.microservice.api.service;
 
+import org.springframework.stereotype.Service;
+
 /**
  * @author liuyiling
  * @date on 2018/10/25
  */
-//这里不要@Service,使用ServiceConfig来进行配置
+@Service
 public class MessageService {
 
-    public void add(){}
+    public void add() {
+    }
 }
