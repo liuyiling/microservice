@@ -7,8 +7,10 @@ package com.liuyiling.microservice.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
+@ServletComponentScan(basePackages = {"com.liuyiling.microservice.core.config"})
 public class MicroserviceApplication {
     public static void main(String[] args) {
         SpringApplication.run(MicroserviceApplication.class, args);

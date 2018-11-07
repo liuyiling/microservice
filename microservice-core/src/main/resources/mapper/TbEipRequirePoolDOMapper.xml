@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.liuyiling.microservice.core.storage.dao.mapper.TbEipRequirePoolDOMapper" >
-  <resultMap id="BaseResultMap" type="com.liuyiling.microservice.core.storage.dao.entity.TbEipRequirePoolDO" >
-    <id column="REQUIRE_ID" property="requireId" jdbcType="DECIMAL" />
+<mapper namespace="com.liuyiling.microservice.core.storage.dao.mapper.TbEipRequirePoolDOMapper">
+    <resultMap id="BaseResultMap" type="com.liuyiling.microservice.core.storage.dao.entity.TbEipRequirePoolDO">
+        <id column="REQUIRE_ID" property="requireId" jdbcType="DECIMAL"/>
 
-    <result column="GUID" property="guid" jdbcType="VARCHAR"  />
-    <result column="SYSTEM_TYPE" property="systemType" jdbcType="VARCHAR"  />
-    <result column="ABBR" property="abbr" jdbcType="VARCHAR"  />
-    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"  />
-    <result column="STATUS" property="status" jdbcType="DECIMAL"  />
-    <result column="SUBMIT_STAFF_CODE" property="submitStaffCode" jdbcType="VARCHAR"  />
-    <result column="SUBMIT_STAFF_NAME" property="submitStaffName" jdbcType="VARCHAR"  />
-    <result column="SUBMIT_STAFF_DEPART" property="submitStaffDepart" jdbcType="VARCHAR"  />
-    <result column="CHANGE_TO_TASK" property="changeToTask" jdbcType="DECIMAL"  />
-    <result column="SUBMIT_TIME" property="submitTime" jdbcType="DECIMAL"  />
-    <result column="SERIAL_NO" property="serialNo" jdbcType="VARCHAR"  />
-    <result column="URL_LINK" property="urlLink" jdbcType="VARCHAR"  />
-    <result column="ATTACHMENT" property="attachment" jdbcType="VARCHAR"  />
-    <result column="FEEDBACK" property="feedback" jdbcType="VARCHAR"  />
-    <result column="TASK_SERIAL_NO" property="taskSerialNo" jdbcType="VARCHAR"  />
-    <result column="URGENT" property="urgent" jdbcType="DECIMAL"  />
+        <result column="GUID" property="guid" jdbcType="VARCHAR"/>
+        <result column="SYSTEM_TYPE" property="systemType" jdbcType="VARCHAR"/>
+        <result column="ABBR" property="abbr" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="DECIMAL"/>
+        <result column="SUBMIT_STAFF_CODE" property="submitStaffCode" jdbcType="VARCHAR"/>
+        <result column="SUBMIT_STAFF_NAME" property="submitStaffName" jdbcType="VARCHAR"/>
+        <result column="SUBMIT_STAFF_DEPART" property="submitStaffDepart" jdbcType="VARCHAR"/>
+        <result column="CHANGE_TO_TASK" property="changeToTask" jdbcType="DECIMAL"/>
+        <result column="SUBMIT_TIME" property="submitTime" jdbcType="DECIMAL"/>
+        <result column="SERIAL_NO" property="serialNo" jdbcType="VARCHAR"/>
+        <result column="URL_LINK" property="urlLink" jdbcType="VARCHAR"/>
+        <result column="ATTACHMENT" property="attachment" jdbcType="VARCHAR"/>
+        <result column="FEEDBACK" property="feedback" jdbcType="VARCHAR"/>
+        <result column="TASK_SERIAL_NO" property="taskSerialNo" jdbcType="VARCHAR"/>
+        <result column="URGENT" property="urgent" jdbcType="DECIMAL"/>
 
-  </resultMap>
- </mapper>
+    </resultMap>
+</mapper>
