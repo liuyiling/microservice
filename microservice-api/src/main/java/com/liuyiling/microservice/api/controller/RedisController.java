@@ -1,21 +1,20 @@
 package com.liuyiling.microservice.api.controller;
 
 import com.liuyiling.microservice.api.apiversion.ApiVersion;
-import com.liuyiling.microservice.core.readlock.RedisRedLock;
+import com.liuyiling.microservice.core.distributedlock.DistributedLock;
 import com.liuyiling.microservice.core.util.KeyUtil;
 import com.liuyiling.microservice.core.util.ResultBean;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.redisson.api.RBucket;
 import org.redisson.api.RMap;
-import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import static java.lang.System.out;
 
 /**
  * @author liuyiling
@@ -31,23 +30,25 @@ public class RedisController {
     private RedissonClient redissonClient;
 
     @ApiOperation(value = "KV操作")
-    @GetMapping(value = "/kvOp")
-    public ResultBean<Integer> kvOp() {
+    @GetMapping(value = "kvOp")
+    public ResultBean<String> kvOp() {
         RBucket<Object> existKey = redissonClient.getBucket(KeyUtil.getUserKey("liuyiling"));
         if (!existKey.isExists()) {
             existKey.set("610");
         }
-        return new ResultBean<>();
+        existKey = redissonClient.getBucket(KeyUtil.getUserKey("liuyiling"));
+        return new ResultBean<>(existKey.get().toString());
     }
 
     @ApiOperation(value = "Map操作")
-    @GetMapping(value = "/mapOp")
-    public ResultBean<Integer> mapOp() {
+    @GetMapping(value = "mapOp")
+    public ResultBean<String> mapOp() {
         RMap<Object, Object> existKey = redissonClient.getMap("EmployeeData");
         if (existKey.isEmpty()) {
             existKey.put("liuyiling", "610");
         }
-        return new ResultBean<>();
+        existKey = redissonClient.getMap("EmployeeData");
+        return new ResultBean<>(existKey.get("liuyiling").toString());
     }
 
     /**
@@ -58,17 +59,15 @@ public class RedisController {
      * @return
      */
     @ApiOperation(value = "秒杀场景，模拟全局redis互斥锁")
-    @GetMapping(value = "/lock")
-    @RedisRedLock
-    public ResultBean<Integer> lock() {
-        for (int i = 0; i < 100; i++) {
-            new Thread(() -> {
-                RMap<Object, Object> existKey = redissonClient.getMap("EmployeeData");
-                existKey.addAndGet("count", 1);
-            }).start();
-        }
-
+    @GetMapping(value = "lock")
+    @DistributedLock(lockName = "distributeLock")
+    public ResultBean<Integer> lock() throws InterruptedException {
+        Thread.sleep(5000L);
         return new ResultBean<>();
     }
 
+    @DistributedLock(lockName = "distributeLock")
+    public void redisLockTest() {
+        out.println(Thread.currentThread().getId());
+    }
 }
