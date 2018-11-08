@@ -50,6 +50,7 @@ public class DistributedLockAspect {
         String key = method.getName() + distributedLock.lockName();
 
         RLock lock = getLock(key, distributedLock);
+        out.println("try to get lock [{}]" + Thread.currentThread().getId() + " " + key);
         if (!lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.unit())) {
             out.println("get lock failed [{}]" + Thread.currentThread().getId());
             return null;

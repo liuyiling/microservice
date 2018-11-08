@@ -27,7 +27,7 @@ public @interface DistributedLock {
     /**
      * 获取锁等待时间，默认3秒
      */
-    long waitTime() default 30000L;
+    long waitTime() default 1000L;
 
     /**
      * 锁自动释放时间，默认30秒
